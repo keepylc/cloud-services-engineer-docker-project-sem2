@@ -11,7 +11,8 @@ RUN CGO_ENABLED=0 GOOS=linux \
 
 FROM alpine:3.24
 
-RUN addgroup -S app && adduser -S -u 10001 -G app app
+RUN apk upgrade --no-cache \
+    && addgroup -S app && adduser -S -u 10001 -G app app
 
 WORKDIR /app
 COPY --from=builder /app/server /app/server

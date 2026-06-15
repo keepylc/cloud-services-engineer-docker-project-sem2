@@ -17,7 +17,8 @@ FROM nginx:1.31-alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/dist /usr/share/nginx/html/momo-store
 
-RUN chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/log/nginx \
+RUN apk upgrade --no-cache \
+    && chown -R nginx:nginx /usr/share/nginx/html /var/cache/nginx /var/log/nginx \
     && touch /tmp/nginx.pid \
     && chown nginx:nginx /tmp/nginx.pid
 
