@@ -75,6 +75,24 @@ services:
           cpus: "0.10"
           memory: 32M
 
+  trivy-backend:
+    image: aquasec/trivy:0.71.1
+    command: ["image", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "--ignore-unfixed", "momo-store-backend:1.0.0"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - trivy-cache:/root/.cache/trivy
+    profiles:
+      - scan
+
+  trivy-frontend:
+    image: aquasec/trivy:0.71.1
+    command: ["image", "--exit-code", "1", "--severity", "HIGH,CRITICAL", "--ignore-unfixed", "momo-store-frontend:1.0.0"]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - trivy-cache:/root/.cache/trivy
+    profiles:
+      - scan
+
 networks:
   app-net:
     driver: bridge
@@ -84,6 +102,8 @@ networks:
 
 volumes:
   nginx-logs:
+    driver: local
+  trivy-cache:
     driver: local
 
 secrets:

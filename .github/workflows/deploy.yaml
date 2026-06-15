@@ -46,3 +46,28 @@ jobs:
           printf '%s' "${{ secrets.BACKEND_SECRET }}" > secrets/backend_secret.txt
       - name: Build via Docker Compose
         uses: hoverkraft-tech/compose-action@v2.2.0
+
+  scan_images_with_trivy:
+    name: Scan images for vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v3
+      - name: Build backend image
+        run: docker build -t momo-store-backend:scan ./backend
+      - name: Build frontend image
+        run: docker build -t momo-store-frontend:scan ./frontend
+      - name: Scan backend image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: momo-store-backend:scan
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"
+      - name: Scan frontend image
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: momo-store-frontend:scan
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "0"
